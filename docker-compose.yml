@@ -1,0 +1,53 @@
+version: '3.0'
+
+services:
+
+  api:
+    container_name: flask_api
+    build:
+        context: .
+        dockerfile: ./services/api/dockerfile
+    ports:
+      - 11050:5000
+    environment:
+      - LOGLEVEL=${LOGLEVEL}
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    command: gunicorn --bind 0.0.0.0:5000 main:app
+    depends_on:
+      - postgresql
+
+  parser:
+    container_name: parser
+    build:
+        context: .
+        dockerfile: ./services/parser/dockerfile
+    environment:
+      - PARSE_DELAY=${PARSE_DELAY}
+      - LOGLEVEL=${LOGLEVEL}
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    command: python3 -m start
+    depends_on:
+      - postgresql
+
+  postgresql:
+    container_name: postgresql
+    image: postgres:10.4
+    volumes:
+      - ${DATA_POSTGRES_DIR}:/opt/postgres
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./init_database.sql:/docker-entrypoint-initdb.d/init_database.sql
+    environment:
+      POSTGRES_PASSWORD: pass1
+      PGDATA: /opt/postgres
+    ports:
+      - 10432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "--quiet"]
+      interval: 30s
+      retries: 5
+    restart: unless-stopped

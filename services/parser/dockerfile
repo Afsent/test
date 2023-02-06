@@ -1,0 +1,15 @@
+FROM python:3.8
+
+RUN mkdir core
+WORKDIR /core
+
+ENV PATH="${PATH}:/root/.local/bin"
+ENV PYTHONPATH=.
+
+COPY services/parser .
+COPY lib ./lib
+COPY conf.json .
+
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install -r requirements.txt
+

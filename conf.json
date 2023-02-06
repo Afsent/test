@@ -1,0 +1,10 @@
+{
+    "main": {
+        "connect_string": "host=postgresql port=5432 dbname=postgres user=postgres password=pass1"
+    },
+    "flask": {
+        "SECRET_KEY": "dasdFSA5fdfsRE5fsad2232",
+        "DEBUG": true,
+        "ENV": "development"
+    }
+}
