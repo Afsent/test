@@ -37,13 +37,11 @@ services:
     container_name: postgresql
     image: postgres:10.4
     volumes:
-      - ${DATA_POSTGRES_DIR}:/opt/postgres
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - ./init_database.sql:/docker-entrypoint-initdb.d/init_database.sql
     environment:
       POSTGRES_PASSWORD: pass1
-      PGDATA: /opt/postgres
     ports:
       - 10432:5432
     healthcheck:
